@@ -1,5 +1,7 @@
-package br.edu.ifmg.produto.entities;
+package br.edu.ifmg.produto.dtos;
 
+import br.edu.ifmg.produto.entities.Category;
+import br.edu.ifmg.produto.entities.Product;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -7,31 +9,18 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name="tb_product")
-public class Product {
+public class ProductDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
     private String description;
     private double price;
     private String imageUrl;
+    private Set<CategoryDTO> categories = new HashSet<>();
 
-    private Instant createAt;
-    private Instant updateAt;
+    public ProductDTO() {}
 
-    @ManyToMany
-    @JoinTable(name = "tb_product_category",
-            joinColumns = @JoinColumn(name="product_id"),
-            inverseJoinColumns = @JoinColumn(name="category_id")
-    )
-    private Set<Category> categories = new HashSet<>();
-
-    public Product() {}
-
-    public Product(long id, String name, String description, double price, String imageUrl) {
+    public ProductDTO(long id, String name, String description, double price, String imageUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -39,19 +28,22 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public Product(Product entity) {
+    public ProductDTO(Product entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.description = entity.getDescription();
         this.price = entity.getPrice();
         this.imageUrl = entity.getImageUrl();
-        this.createAt = entity.getCreateAt();
-        this.updateAt = entity.getUpdateAt();
+
+        entity.getCategories()
+                .forEach(c ->
+                        this.categories.add(new CategoryDTO(c)));
     }
 
-    public Product(Product product, Set<Category> categories) {
+    public ProductDTO(Product product, Set<Category> categories) {
         this(product);
-        this.categories = categories;
+        categories
+           .forEach(c -> this.categories.add(new CategoryDTO(c)));
 
     }
 
@@ -96,40 +88,34 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public Instant getCreateAt() {
-        return createAt;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.createAt = Instant.now();
-    }
-
-    public Instant getUpdateAt() {
-        return updateAt;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updateAt = Instant.now();
-    }
-
-    public Set<Category> getCategories() {
+    public Set<CategoryDTO> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    public void setCategories(Set<CategoryDTO> categories) {
         this.categories = categories;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Product product)) return false;
+        if (!(o instanceof ProductDTO product)) return false;
         return id == product.id;
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "ProductDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", categories=" + categories +
+                '}';
     }
 }
