@@ -5,6 +5,7 @@ import br.edu.ifmg.produto.dtos.ProductDTO;
 import br.edu.ifmg.produto.entities.Category;
 import br.edu.ifmg.produto.entities.Product;
 import br.edu.ifmg.produto.repository.ProductRepository;
+import br.edu.ifmg.produto.resources.ProductResource;
 import br.edu.ifmg.produto.services.exceptions.DatabaseException;
 import br.edu.ifmg.produto.services.exceptions.ResourceNotFound;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +35,12 @@ public class ProductService {
             return
                     list.map(
                             product ->
-                                    new ProductDTO(product));
+                                    new ProductDTO(product)
+                                            .add( linkTo(methodOn(ProductResource.class).findAll(null)).withSelfRel() )
+                                            .add( linkTo(methodOn(ProductResource.class).findById(product.getId())).withRel("Get a product") )
+
+
+                    );
     }
 
     @Transactional(readOnly = true)
@@ -46,7 +54,13 @@ public class ProductService {
                    ()->
                     new ResourceNotFound("Product not found " + id));
 
-            return new ProductDTO(product);
+            return new ProductDTO(product)
+                  //  .add( linkTo().withSelfRel() )
+                  //  .add( linkTo().withRel("All products") )
+                  //  .add( linkTo().withRel("Update product") )
+                  //  .add( linkTo().withRel("Delete product") )
+                    ;
+
 
     }
 
