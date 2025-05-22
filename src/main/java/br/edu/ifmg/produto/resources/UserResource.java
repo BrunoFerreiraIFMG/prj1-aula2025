@@ -108,6 +108,7 @@ public class UserResource {
                     @ApiResponse(description = "Not found", responseCode = "404")
             }
     )
+
     public ResponseEntity<Void> delete(
             @PathVariable Long id) {
         userService.delete(id);
