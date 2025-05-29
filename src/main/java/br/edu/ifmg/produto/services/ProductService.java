@@ -2,6 +2,7 @@ package br.edu.ifmg.produto.services;
 
 import br.edu.ifmg.produto.dtos.CategoryDTO;
 import br.edu.ifmg.produto.dtos.ProductDTO;
+import br.edu.ifmg.produto.dtos.ProductListDTO;
 import br.edu.ifmg.produto.entities.Category;
 import br.edu.ifmg.produto.entities.Product;
 import br.edu.ifmg.produto.repository.ProductRepository;
@@ -136,6 +137,9 @@ public class ProductService {
                       entity.getCategories().add(new Category(c)));
  }
 
+    public Page<ProductListDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
+       return null;
+    }
 }
 
 
