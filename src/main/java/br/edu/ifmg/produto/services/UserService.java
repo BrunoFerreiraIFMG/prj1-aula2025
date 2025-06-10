@@ -154,7 +154,7 @@ public class UserService implements UserDetailsService {
         Role role =
         roleRepository.findByAuthority("ROLE_OPERATOR");
         entity.getRoles().clear();
-        entity.getRoles().add(role);
+        entity.getRoles().add(role);//inserimos o perfil de Operadora
         entity.setPassword(
                 passwordEncoder.encode(dto.getPassword()));
         User novo = repository.save(entity);
